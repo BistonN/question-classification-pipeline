@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  app:
+    build: ./app
+    container_name: classifier
+    depends_on:
+      - ollama
+    volumes:
+      - ./app:/app
+      - ./imagens:/imagens
+    env_file:
+      - .env
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+    command: python main.py
+
+volumes:
+  ollama_data:
